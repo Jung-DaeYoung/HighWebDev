@@ -1,0 +1,38 @@
+{{>layouts/header}}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-success">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">✏️ 일정 수정하기</h4>
+                </div>
+                <div class="card-body">
+                    {{#schedule}}
+                        <form action="/schedules/update" method="post">
+                            <input type="hidden" name="id" value="{{id}}">
+                            <div class="mb-3">
+                                <label class="form-label">제목</label>
+                                <input type="text" class="form-control" name="title" value="{{title}}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">세부 내용</label>
+                                <textarea class="form-control" name="content" rows="4">{{content}}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">마감 기한</label>
+                                <input type="datetime-local" class="form-control" name="deadline" value="{{formattedDeadline}}" required>
+                            </div>
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="/schedules/{{id}}" class="btn btn-outline-secondary me-md-2">취소</a>
+                                <button type="submit" class="btn btn-success">수정 완료</button>
+                            </div>
+                        </form>
+                    {{/schedule}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{>layouts/footer}}

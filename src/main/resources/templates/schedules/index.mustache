@@ -1,0 +1,35 @@
+{{>layouts/header}}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📅 내 일정 목록</h2>
+        <a href="/schedules/new" class="btn btn-primary">+ 새 일정 추가</a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {{#scheduleList}}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">{{title}}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            ⏰ 마감: {{displayDeadline}}
+                        </h6>
+                        <p class="card-text text-truncate" style="max-height: 3rem;">{{content}}</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
+                        <a href="/schedules/{{id}}" class="btn btn-sm btn-outline-info">자세히 보기</a>
+                        <span class="badge {{urgencyClass}}">{{dDay}}</span>
+                    </div>
+                </div>
+            </div>
+        {{/scheduleList}}
+        {{^scheduleList}}
+            <div class="col-12 text-center py-5">
+                <p class="text-muted">등록된 일정이 없습니다. 새로운 일정을 추가해 보세요!</p>
+            </div>
+        {{/scheduleList}}
+    </div>
+</div>
+
+{{>layouts/footer}}

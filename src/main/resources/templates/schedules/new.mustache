@@ -1,0 +1,35 @@
+{{>layouts/header}}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">✨ 새 일정 등록</h4>
+                </div>
+                <div class="card-body">
+                    <form action="/schedules/create" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">제목</label>
+                            <input type="text" class="form-control" name="title" placeholder="무엇을 해야 하나요?" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">세부 내용</label>
+                            <textarea class="form-control" name="content" rows="4" placeholder="상세 내용을 적어주세요."></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">마감 기한</label>
+                            <input type="datetime-local" class="form-control" name="deadline" required>
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="/schedules" class="btn btn-outline-secondary me-md-2">취소</a>
+                            <button type="submit" class="btn btn-primary">등록하기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{>layouts/footer}}
