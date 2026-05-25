@@ -1,35 +1,397 @@
 {{>layouts/header}}
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>📅 내 일정 목록</h2>
-        <a href="/schedules/new" class="btn btn-primary">+ 새 일정 추가</a>
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+<style>
+    body { background: #f0f4ff; }
+
+    .main-layout {
+        display: flex;
+        gap: 20px;
+        height: calc(100vh - 120px);
+        padding: 16px;
+        overflow: hidden;
+    }
+
+    .calendar-panel {
+        flex: 0 0 68%;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+        padding: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        border: 1.5px solid #b6c8f5;
+    }
+
+    .schedule-panel {
+        flex: 0 0 calc(32% - 20px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .schedule-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        flex-shrink: 0;
+    }
+
+    .schedule-list {
+        overflow-y: auto;
+        flex: 1;
+        padding-right: 4px;
+    }
+
+    .schedule-list::-webkit-scrollbar { width: 4px; }
+    .schedule-list::-webkit-scrollbar-thumb { background: #b6c8f5; border-radius: 4px; }
+
+    .schedule-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        border-top: 1px solid #dee2e6;
+        border-right: 1px solid #dee2e6;
+        border-bottom: 1px solid #dee2e6;
+        transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+        cursor: pointer;
+    }
+
+    .schedule-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+    .schedule-card.active { background: #f0f4ff; transform: translateY(-2px); }
+
+    .schedule-card .card-title {
+        font-size: 0.95rem; font-weight: 700; margin-bottom: 4px;
+        color: #0a0a0a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .schedule-card .card-content {
+        font-size: 0.82rem; color: #1f2937;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .schedule-card .card-footer-row {
+        display: flex; justify-content: space-between; align-items: center; margin-top: 10px;
+    }
+
+    .badge-dday { font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; font-weight: 700; color: #fff; }
+
+    #calendar { flex: 1; overflow: hidden; }
+
+    .fc .fc-toolbar-title { font-size: 1.1rem !important; font-weight: 800 !important; color: #0a0a0a !important; }
+    .fc .fc-col-header-cell-cushion { font-size: 0.82rem !important; font-weight: 800 !important; color: #0d6efd !important; text-decoration: none !important; }
+
+    .fc .fc-daygrid-day-number {
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+        color: #1a1a1a !important;
+        text-decoration: none !important;
+    }
+
+    .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
+        font-size: 0.8rem !important;
+        font-weight: 900 !important;
+        color: #0d6efd !important;
+        background: transparent;
+        border-radius: 0;
+        width: auto;
+        height: auto;
+        display: block !important;
+        padding: 0 !important;
+        margin: 0;
+        line-height: inherit !important;
+    }
+
+    .fc .fc-button-primary {
+        background-color: #0d6efd !important; border-color: #0d6efd !important; color: #fff !important;
+        font-size: 0.78rem !important; font-weight: 700 !important; padding: 3px 10px !important;
+        border-radius: 6px !important; box-shadow: none !important; outline: none !important;
+    }
+    .fc .fc-button-primary:hover { background-color: #0b5ed7 !important; border-color: #0b5ed7 !important; }
+    .fc .fc-button-primary:not(:disabled).fc-button-active { background-color: #0a58ca !important; border-color: #0a58ca !important; }
+    .fc .fc-button-primary:focus { box-shadow: none !important; outline: none !important; }
+
+    .fc-theme-standard td, .fc-theme-standard th, .fc-theme-standard .fc-scrollgrid { border-color: #93b4f0 !important; }
+
+    .fc .fc-daygrid-day.fc-day-today { background: #fff !important; }
+
+    .fc .fc-daygrid-event { background: transparent !important; border: none !important; box-shadow: none !important; }
+
+    .my-event {
+        display: flex; align-items: center; gap: 4px;
+        padding: 1px 4px; cursor: pointer; border-radius: 4px;
+    }
+
+    .my-event-dot { width: 8px; height: 8px; min-width: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .my-event-title {
+        font-size: 0.70rem; font-weight: 700; color: #0a0a0a;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 85px;
+    }
+
+    .page-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 0; color: #0a0a0a; }
+    .section-title { font-size: 1rem; font-weight: 800; color: #0a0a0a; }
+
+    .header-btn {
+        display: inline-block;
+        min-width: 90px;
+        text-align: center;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        padding: 6px 12px !important;
+        border-radius: 6px !important;
+        line-height: 1.4 !important;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .header-btn-outline {
+        background: #fff;
+        color: #0d6efd;
+        border: 1.5px solid #0d6efd !important;
+    }
+
+    .header-btn-outline:hover { background: #e8f0fe; }
+    .header-btn-outline.active { background: #0d6efd; color: #fff; }
+
+    .header-btn-primary {
+        background: #0d6efd;
+        color: #fff !important;
+    }
+
+    .header-btn-primary:hover { background: #0b5ed7; }
+</style>
+
+<div class="main-layout">
+    <div class="calendar-panel">
+        <div class="d-flex align-items-center mb-3" style="flex-shrink:0;">
+            <h2 class="page-title">📅 내 일정 목록</h2>
+        </div>
+        <div id="calendar"></div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {{#scheduleList}}
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title text-truncate">{{title}}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">
-                            ⏰ 마감: {{displayDeadline}}
-                        </h6>
-                        <p class="card-text text-truncate" style="max-height: 3rem;">{{content}}</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between align-items-center">
-                        <a href="/schedules/{{id}}" class="btn btn-sm btn-outline-info">자세히 보기</a>
-                        <span class="badge {{urgencyClass}}">{{dDay}}</span>
+    <div class="schedule-panel">
+        <div class="schedule-panel-header">
+            <span class="section-title">📋 일정</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+                <button id="sort-deadline-btn" class="header-btn header-btn-outline">마감임박순</button>
+                <a href="/schedules/new" class="header-btn header-btn-primary">+ 새 일정 추가</a>
+            </div>
+        </div>
+        <div class="schedule-list" id="schedule-list">
+            {{#scheduleList}}
+                <div class="schedule-card" data-id="{{id}}" data-deadline="{{formattedDeadline}}">
+                    <div class="card-title">{{title}}</div>
+                    <div class="card-content">{{content}}</div>
+                    <div class="card-footer-row">
+                        <a href="/schedules/{{id}}" class="btn btn-sm fw-bold detail-btn" style="font-size:0.75rem; padding: 2px 10px; border-width:1.5px;">자세히 보기</a>
+                        <span class="badge-dday">{{dDay}}</span>
                     </div>
                 </div>
-            </div>
-        {{/scheduleList}}
-        {{^scheduleList}}
-            <div class="col-12 text-center py-5">
-                <p class="text-muted">등록된 일정이 없습니다. 새로운 일정을 추가해 보세요!</p>
-            </div>
-        {{/scheduleList}}
+            {{/scheduleList}}
+            {{^scheduleList}}
+                <div class="text-center py-5" style="color:#374151;"><p>등록된 일정이 없습니다.</p></div>
+            {{/scheduleList}}
+        </div>
     </div>
 </div>
+
+<script id="schedule-data" type="application/json">
+    [
+    {{#scheduleList}}
+        {"id":"{{id}}","title":"{{title}}","start":"{{formattedDeadline}}","url":"/schedules/{{id}}"}
+    {{/scheduleList}}
+    ]
+</script>
+
+<script>
+    const RAINBOW = ['#e53935','#fb8c00','#fdd835','#43a047','#1e88e5','#3949ab','#8e24aa'];
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const cards = document.querySelectorAll('#schedule-list .schedule-card');
+        const idColorMap = {};
+        const idCardMap = {};
+        const idDeadlineMap = {};
+        const dateColorMap = {};
+        let selectedId = null;
+        let sortedMode = false;
+
+        cards.forEach(function(card, i) {
+            const color = RAINBOW[i % RAINBOW.length];
+            const id = card.getAttribute('data-id');
+            const deadline = card.getAttribute('data-deadline');
+            idColorMap[id] = color;
+            idCardMap[id] = card;
+            idDeadlineMap[id] = deadline;
+
+            if (deadline) {
+                const dateStr = deadline.substring(0, 10);
+                if (!dateColorMap[dateStr]) dateColorMap[dateStr] = [];
+                dateColorMap[dateStr].push({ id, color });
+            }
+
+            card.style.borderLeft = '4px solid ' + color;
+            const badge = card.querySelector('.badge-dday');
+            if (badge) badge.style.background = color;
+            const btn = card.querySelector('.detail-btn');
+            if (btn) { btn.style.color = color; btn.style.borderColor = color; }
+        });
+
+        const raw = document.getElementById('schedule-data').textContent.trim();
+        let events = [];
+        try {
+            const fixed = '[' + raw.replace(/^\[|\]$/g, '')
+                    .split(/\}\s*\{/)
+                    .map(s => s.replace(/^\{?/, '{').replace(/\}?$/, '}'))
+                    .join(',') + ']';
+            events = JSON.parse(fixed).map(function(e) {
+                return {
+                    id: e.id, title: e.title, start: e.start, url: e.url,
+                    extendedProps: { dotColor: idColorMap[e.id] || '#1e88e5' }
+                };
+            });
+        } catch (err) { console.error('파싱 오류', err); }
+
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+            return 'rgba('+r+','+g+','+b+','+alpha+')';
+        }
+
+        function selectCard(id) {
+            selectedId = id;
+            document.querySelectorAll('#schedule-list .schedule-card').forEach(function(c) {
+                c.classList.remove('active');
+                c.style.boxShadow = '';
+            });
+            const card = idCardMap[id];
+            const color = idColorMap[id];
+            if (card) {
+                card.classList.add('active');
+                card.style.boxShadow = '0 0 0 2.5px ' + color + ', 0 4px 16px rgba(0,0,0,0.13)';
+                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            document.querySelectorAll('.fc-daygrid-day').forEach(function(el) {
+                el.style.outline = '';
+            });
+            if (id && idDeadlineMap[id]) {
+                const dateStr = idDeadlineMap[id].substring(0, 10);
+                document.querySelectorAll('.fc-daygrid-day').forEach(function(el) {
+                    if (el.getAttribute('data-date') === dateStr) {
+                        el.style.outline = '2.5px solid ' + color;
+                    }
+                });
+            }
+        }
+
+        const sortBtn = document.getElementById('sort-deadline-btn');
+        sortBtn.addEventListener('click', function() {
+            sortedMode = !sortedMode;
+            sortBtn.classList.toggle('active', sortedMode);
+
+            const list = document.getElementById('schedule-list');
+            const cardArray = Array.from(document.querySelectorAll('#schedule-list .schedule-card'));
+            const now = new Date();
+
+            if (sortedMode) {
+                const active = cardArray.filter(function(card) {
+                    return new Date(card.getAttribute('data-deadline')) > now;
+                });
+                const expired = cardArray.filter(function(card) {
+                    return new Date(card.getAttribute('data-deadline')) <= now;
+                });
+                active.sort(function(a, b) {
+                    return new Date(a.getAttribute('data-deadline')) - new Date(b.getAttribute('data-deadline'));
+                });
+                cardArray.forEach(function(c) { c.style.display = ''; });
+                active.forEach(function(card) { list.appendChild(card); });
+                expired.forEach(function(card) { list.appendChild(card); });
+            } else {
+                cardArray.sort(function(a, b) {
+                    return parseInt(a.getAttribute('data-id')) - parseInt(b.getAttribute('data-id'));
+                });
+                cardArray.forEach(function(card) {
+                    card.style.display = '';
+                    list.appendChild(card);
+                });
+            }
+        });
+
+        const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+            initialView: 'dayGridMonth',
+            locale: 'ko',
+            height: '100%',
+            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek' },
+            events: events,
+
+            dayCellDidMount: function(arg) {
+                const dateStr = arg.el.getAttribute('data-date');
+                if (!dateStr) return;
+                const isToday = arg.el.classList.contains('fc-day-today');
+
+                if (dateColorMap[dateStr] && !isToday) {
+                    arg.el.style.background = hexToRgba(dateColorMap[dateStr][0].color, 0.15);
+                }
+
+                if (selectedId && idDeadlineMap[selectedId]) {
+                    const selectedDate = idDeadlineMap[selectedId].substring(0, 10);
+                    if (dateStr === selectedDate && !isToday) {
+                        const color = idColorMap[selectedId];
+                        arg.el.style.background = hexToRgba(color, 0.30);
+                        arg.el.style.outline = '2.5px solid ' + color;
+                    }
+                }
+            },
+
+            eventContent: function(arg) {
+                const color = arg.event.extendedProps.dotColor || '#1e88e5';
+                const wrapper = document.createElement('div');
+                wrapper.className = 'my-event';
+                wrapper.setAttribute('data-event-id', arg.event.id);
+
+                const dot = document.createElement('span');
+                dot.className = 'my-event-dot';
+                dot.style.background = color;
+
+                const title = document.createElement('span');
+                title.className = 'my-event-title';
+                title.textContent = arg.event.title;
+
+                wrapper.appendChild(dot);
+                wrapper.appendChild(title);
+                return { domNodes: [wrapper] };
+            },
+
+            eventClick: function(info) {
+                info.jsEvent.preventDefault();
+                selectCard(info.event.id);
+            }
+        });
+        calendar.render();
+
+        cards.forEach(function(card) {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('a')) return;
+                const id = card.getAttribute('data-id');
+                const deadline = idDeadlineMap[id];
+
+                if (selectedId === id) {
+                    selectCard(id);
+                    return;
+                }
+
+                selectCard(id);
+                if (deadline) calendar.gotoDate(deadline);
+            });
+        });
+    });
+</script>
 
 {{>layouts/footer}}

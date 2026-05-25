@@ -1,31 +1,34 @@
 {{>layouts/header}}
 
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow border-success">
-                <div class="card-header bg-success text-white">
-                    <h4 class="mb-0">✏️ 일정 수정하기</h4>
+        <div class="col-md-7">
+            <div class="card shadow border-0" style="border-radius:16px; border: 1.5px solid #b6c8f5 !important;">
+                <div class="card-header bg-white border-bottom" style="border-radius:16px 16px 0 0; padding: 20px 24px 16px;">
+                    <h4 class="fw-bold mb-0" style="color:#0a0a0a;">✏️ 일정 수정하기</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="padding: 24px;">
                     {{#schedule}}
                         <form action="/schedules/update" method="post">
                             <input type="hidden" name="id" value="{{id}}">
-                            <div class="mb-3">
-                                <label class="form-label">제목</label>
-                                <input type="text" class="form-control" name="title" value="{{title}}" required>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold" style="color:#1a1a1a;">제목</label>
+                                <input type="text" class="form-control" name="title" value="{{title}}" required
+                                       style="border-radius:8px; border:1.5px solid #b6c8f5; padding: 10px 14px;">
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">세부 내용</label>
-                                <textarea class="form-control" name="content" rows="4">{{content}}</textarea>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold" style="color:#1a1a1a;">세부 내용</label>
+                                <textarea class="form-control" name="content" rows="4"
+                                          style="border-radius:8px; border:1.5px solid #b6c8f5; padding: 10px 14px;">{{content}}</textarea>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label">마감 기한</label>
-                                <input type="datetime-local" class="form-control" name="deadline" value="{{formattedDeadline}}" required>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold" style="color:#1a1a1a;">마감 기한</label>
+                                <input type="datetime-local" class="form-control" name="deadline" value="{{formattedDeadline}}" required
+                                       style="border-radius:8px; border:1.5px solid #b6c8f5; padding: 10px 14px;">
                             </div>
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="/schedules/{{id}}" class="btn btn-outline-secondary me-md-2">취소</a>
-                                <button type="submit" class="btn btn-success">수정 완료</button>
+                            <div class="d-flex justify-content-end gap-2 mt-4">
+                                <a href="/schedules/{{id}}" class="btn btn-outline-secondary fw-bold px-4" style="border-radius:8px;">취소</a>
+                                <button type="submit" class="btn btn-primary fw-bold px-4" style="border-radius:8px;">수정 완료</button>
                             </div>
                         </form>
                     {{/schedule}}

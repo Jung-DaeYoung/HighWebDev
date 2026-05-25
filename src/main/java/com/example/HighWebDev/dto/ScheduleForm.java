@@ -12,7 +12,7 @@ public class ScheduleForm {
     private String content;
     private LocalDateTime deadline;
 
-    public Schedule toEntity() {
-        return new Schedule(id, title, content, deadline, null);
+    public Schedule toEntity(String username) {
+        return new Schedule(id, username, title, content, deadline, null);
     }
 }

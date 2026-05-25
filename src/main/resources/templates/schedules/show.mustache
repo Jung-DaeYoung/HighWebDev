@@ -1,40 +1,36 @@
 {{>layouts/header}}
 
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-7">
             {{#schedule}}
-                <div class="card shadow">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">{{title}}</h4>
-                        <span class="badge bg-info">ID: {{id}}</span>
+                <div class="card shadow border-0" style="border-radius:16px; border: 1.5px solid #b6c8f5 !important;">
+                    <div class="card-header bg-white border-bottom" style="border-radius:16px 16px 0 0; padding: 20px 24px 16px;">
+                        <h4 class="fw-bold mb-0" style="color:#0a0a0a;">{{title}}</h4>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <h6 class="text-muted border-bottom pb-2">⏰ 마감 기한</h6>
-                            <p class="lead">{{displayDeadline}}</p>
+                    <div class="card-body" style="padding: 24px;">
+                        <div class="mb-4 p-3" style="background:#f8f9fa; border-radius:10px;">
+                            <div class="fw-bold mb-1" style="font-size:0.82rem; color:#374151;"></div>
+                            <div style="white-space:pre-wrap; color:#1f2937; font-size:0.92rem;">{{content}}</div>
                         </div>
-                        <div class="mb-4">
-                            <h6 class="text-muted border-bottom pb-2">📝 세부 내용</h6>
-                            <p class="card-text" style="white-space: pre-wrap;">{{content}}</p>
-                        </div>
-                        <div class="text-end text-muted small">
-                            등록일: {{createdAt}}
+                        <div class="text-end" style="font-size:0.78rem; color:#9ca3af;">
+                            마감 기한: {{displayDeadline}}
                         </div>
                     </div>
-                    <div class="card-footer bg-transparent d-flex justify-content-between">
-                        <a href="/schedules" class="btn btn-outline-secondary">목록으로</a>
-                        <div>
-                            <a href="/schedules/{{id}}/edit" class="btn btn-success">수정하기</a>
-                            <a href="/schedules/{{id}}/delete" class="btn btn-danger" onclick="return confirm('정말 삭제하시겠습니까?')">삭제하기</a>
+                    <div class="card-footer bg-white border-top d-flex justify-content-between align-items-center" style="border-radius:0 0 16px 16px; padding:16px 24px;">
+                        <a href="/" class="btn btn-outline-secondary fw-bold" style="border-radius:8px;">목록으로</a>
+                        <div class="d-flex gap-2">
+                            <a href="/schedules/{{id}}/edit" class="btn btn-outline-primary fw-bold" style="border-radius:8px; border-width:1.5px;">수정하기</a>
+                            <a href="/schedules/{{id}}/delete" class="btn btn-primary fw-bold" style="border-radius:8px;"
+                               onclick="return confirm('정말 삭제하시겠습니까?')">삭제하기</a>
                         </div>
                     </div>
                 </div>
             {{/schedule}}
             {{^schedule}}
-                <div class="alert alert-warning text-center">
-                    존재하지 않는 일정입니다. <br>
-                    <a href="/schedules" class="alert-link">목록으로 돌아가기</a>
+                <div class="card shadow border-0 text-center p-5" style="border-radius:16px;">
+                    <p class="text-muted fw-bold">존재하지 않는 일정입니다.</p>
+                    <a href="/" class="btn btn-primary fw-bold mt-2" style="border-radius:8px;">목록으로 돌아가기</a>
                 </div>
             {{/schedule}}
         </div>
