@@ -1,90 +1,88 @@
 package com.example.HighWebDev.controller;
 
 import com.example.HighWebDev.dto.ScheduleForm;
+import com.example.HighWebDev.dto.ScheduleResponseDto;
 import com.example.HighWebDev.entity.Schedule;
-import com.example.HighWebDev.repository.ScheduleRepository;
+import com.example.HighWebDev.service.ScheduleService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 @Controller
 @Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/schedules")
 public class ScheduleController {
 
-    @Autowired
-    private ScheduleRepository scheduleRepository;
+    private final ScheduleService scheduleService;
 
-    @GetMapping("/")
-    public String main(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        if (userDetails != null) {
-            List<Schedule> scheduleEntityList = scheduleRepository.findAllByUsernameOrderByIdAsc(userDetails.getUsername());
-            model.addAttribute("scheduleList", scheduleEntityList);
-        } else {
-            model.addAttribute("scheduleList", List.of());
-        }
-        return "schedules/index";
-    }
-
-    @GetMapping("/schedules")
+    @GetMapping
     public String index(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        List<Schedule> scheduleEntityList = scheduleRepository.findAllByUsernameOrderByIdAsc(userDetails.getUsername());
-        model.addAttribute("scheduleList", scheduleEntityList);
+        if (userDetails == null) {
+            model.addAttribute("scheduleList", List.of());
+            return "schedules/index";
+        }
+        List<ScheduleResponseDto> scheduleList = scheduleService.findAllByUsername(userDetails.getUsername())
+                .stream()
+                .map(scheduleService::toResponseDto)
+                .toList();
+        model.addAttribute("scheduleList", scheduleList);
         return "schedules/index";
     }
 
-    @GetMapping("/schedules/new")
+    @GetMapping("/new")
     public String newScheduleForm() {
         return "schedules/new";
     }
 
-    @PostMapping("/schedules/create")
+    @PostMapping("/create")
     public String createSchedule(ScheduleForm form,
                                  @AuthenticationPrincipal UserDetails userDetails) {
         Schedule schedule = form.toEntity(userDetails.getUsername());
-        Schedule saved = scheduleRepository.save(schedule);
+        Schedule saved = scheduleService.save(schedule);
         return "redirect:/schedules/" + saved.getId();
     }
 
-    @GetMapping("/schedules/{id}")
+    @GetMapping("/{id}")
     public String show(@PathVariable Long id, Model model) {
-        Schedule scheduleEntity = scheduleRepository.findById(id).orElse(null);
-        model.addAttribute("schedule", scheduleEntity);
+        Schedule schedule = scheduleService.findById(id);
+        if (schedule != null) {
+            model.addAttribute("schedule", scheduleService.toResponseDto(schedule));
+        }
         return "schedules/show";
     }
 
-    @GetMapping("/schedules/{id}/edit")
+    @GetMapping("/{id}/edit")
     public String edit(@PathVariable Long id, Model model) {
-        Schedule scheduleEntity = scheduleRepository.findById(id).orElse(null);
-        model.addAttribute("schedule", scheduleEntity);
+        Schedule schedule = scheduleService.findById(id);
+        if (schedule != null) {
+            model.addAttribute("schedule", scheduleService.toResponseDto(schedule));
+        }
         return "schedules/edit";
     }
 
-    @PostMapping("/schedules/update")
+    @PostMapping("/update")
     public String update(ScheduleForm form,
                          @AuthenticationPrincipal UserDetails userDetails) {
         Schedule scheduleEntity = form.toEntity(userDetails.getUsername());
-        Schedule target = scheduleRepository.findById(scheduleEntity.getId()).orElse(null);
+        Schedule target = scheduleService.findById(scheduleEntity.getId());
         if (target != null) {
             target.patch(scheduleEntity);
-            scheduleRepository.save(target);
+            scheduleService.save(target);
         }
         return "redirect:/schedules/" + scheduleEntity.getId();
     }
 
-    @GetMapping("/schedules/{id}/delete")
-    public String delete(@PathVariable Long id, RedirectAttributes rttr) {
-        Schedule target = scheduleRepository.findById(id).orElse(null);
-        if (target != null) {
-            scheduleRepository.delete(target);
-            rttr.addFlashAttribute("msg", "삭제되었습니다!");
-        }
-        return "redirect:/";
+    @DeleteMapping("/{id}")
+    @ResponseBody
+    public String delete(@PathVariable Long id) {
+        scheduleService.delete(id);
+        return "ok";
     }
 }

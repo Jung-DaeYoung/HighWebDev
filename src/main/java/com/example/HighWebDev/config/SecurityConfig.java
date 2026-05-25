@@ -20,13 +20,13 @@ public class SecurityConfig {
         http
                 .userDetailsService(memberService)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/auth/**", "/h2-console/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/", "/schedules", "/auth/**", "/h2-console/**", "/css/**", "/js/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/auth/login")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/schedules", true)
                         .failureUrl("/auth/login?error=true")
                         .permitAll()
                 )

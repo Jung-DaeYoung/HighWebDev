@@ -16,7 +16,6 @@ public class MemberService implements UserDetailsService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    // 회원가입
     public void signup(String username, String password) {
         if (memberRepository.findByUsername(username).isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
@@ -25,7 +24,6 @@ public class MemberService implements UserDetailsService {
         memberRepository.save(member);
     }
 
-    // Spring Security 로그인 시 자동 호출
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByUsername(username)

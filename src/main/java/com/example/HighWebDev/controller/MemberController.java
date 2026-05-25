@@ -7,24 +7,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class MemberController {
 
     private final MemberService memberService;
 
-    @GetMapping("/login")
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/schedules";
+    }
+
+    @GetMapping("/auth/login")
     public String loginPage(@RequestParam(required = false) String error, Model model) {
         if (error != null) model.addAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");
         return "auth/login";
     }
 
-    @GetMapping("/signup")
+    @GetMapping("/auth/signup")
     public String signupPage() {
         return "auth/signup";
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public String signup(@RequestParam String username,
                          @RequestParam String password,
                          Model model) {

@@ -1,12 +1,11 @@
 package com.example.HighWebDev.repository;
 
 import com.example.HighWebDev.entity.Schedule;
-import org.springframework.data.repository.CrudRepository;
-import java.util.ArrayList;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ScheduleRepository extends CrudRepository<Schedule, Long> {
+import java.util.List;
 
-    ArrayList<Schedule> findAllByUsernameOrderByIdAsc(String username);
+public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 
-    ArrayList<Schedule> findAllByOrderByIdAsc();
+    List<Schedule> findAllByUsernameOrderByIdAsc(String username);
 }
