@@ -23,16 +23,16 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     @GetMapping
-    public String index(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    public String index(@AuthenticationPrincipal UserDetails userDetails,
+                        @RequestParam(required = false, defaultValue = "id") String sort,
+                        Model model) {
         if (userDetails == null) {
             model.addAttribute("scheduleList", List.of());
             return "schedules/index";
         }
-        List<ScheduleResponseDto> scheduleList = scheduleService.findAllByUsername(userDetails.getUsername())
-                .stream()
-                .map(scheduleService::toResponseDto)
-                .toList();
+        List<ScheduleResponseDto> scheduleList = scheduleService.findAllByUsername(userDetails.getUsername(), sort);
         model.addAttribute("scheduleList", scheduleList);
+        model.addAttribute("isDeadlineSort", "deadline".equals(sort));
         return "schedules/index";
     }
 
@@ -53,7 +53,6 @@ public class ScheduleController {
     public String show(@PathVariable Long id, Model model) {
         Schedule schedule = scheduleService.findById(id);
         if (schedule != null) {
-            model.addAttribute("schedule", scheduleService.toResponseDto(schedule));
         }
         return "schedules/show";
     }
@@ -62,7 +61,6 @@ public class ScheduleController {
     public String edit(@PathVariable Long id, Model model) {
         Schedule schedule = scheduleService.findById(id);
         if (schedule != null) {
-            model.addAttribute("schedule", scheduleService.toResponseDto(schedule));
         }
         return "schedules/edit";
     }

@@ -17,9 +17,29 @@ import java.util.List;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private static final String[] RAINBOW = {"#e53935", "#fb8c00", "#fdd835", "#43a047", "#1e88e5", "#3949ab", "#8e24aa"};
 
-    public List<Schedule> findAllByUsername(String username) {
-        return scheduleRepository.findAllByUsernameOrderByIdAsc(username);
+    public List<ScheduleResponseDto> findAllByUsername(String username, String sort) {
+        List<Schedule> schedules = scheduleRepository.findAllByUsernameOrderByIdAsc(username);
+        LocalDateTime now = LocalDateTime.now();
+
+        if ("deadline".equals(sort)) {
+            // 마감 임박순 정렬 로직: [미래 일정(가까운순) -> 과거 일정(최근순)]
+            List<Schedule> future = schedules.stream()
+                    .filter(s -> s.getDeadline() != null && s.getDeadline().isAfter(now))
+                    .sorted((a, b) -> a.getDeadline().compareTo(b.getDeadline()))
+                    .toList();
+
+            List<Schedule> past = schedules.stream()
+                    .filter(s -> s.getDeadline() == null || !s.getDeadline().isAfter(now))
+                    .sorted((a, b) -> {
+                        if (a.getDeadline() == null && b.getDeadline() == null) return 0;
+                        if (a.getDeadline() == null) return 1;
+                        if (b.getDeadline() == null) return -1;
+                        return b.getDeadline().compareTo(a.getDeadline());
+                    })
+                    .toList();
+
     }
 
     public Schedule findById(Long id) {
@@ -34,13 +54,11 @@ public class ScheduleService {
         scheduleRepository.deleteById(id);
     }
 
-    public ScheduleResponseDto toResponseDto(Schedule schedule) {
         return new ScheduleResponseDto(
                 schedule,
                 getDDay(schedule.getDeadline()),
                 getUrgencyClass(schedule.getDeadline()),
                 getFormattedDeadline(schedule.getDeadline()),
-                getDisplayDeadline(schedule.getDeadline())
         );
     }
 
