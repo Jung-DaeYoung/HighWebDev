@@ -53,6 +53,7 @@ public class ScheduleController {
     public String show(@PathVariable Long id, Model model) {
         Schedule schedule = scheduleService.findById(id);
         if (schedule != null) {
+            model.addAttribute("schedule", scheduleService.toResponseDto(schedule, "#1e88e5"));
         }
         return "schedules/show";
     }
@@ -61,6 +62,7 @@ public class ScheduleController {
     public String edit(@PathVariable Long id, Model model) {
         Schedule schedule = scheduleService.findById(id);
         if (schedule != null) {
+            model.addAttribute("schedule", scheduleService.toResponseDto(schedule, "#1e88e5"));
         }
         return "schedules/edit";
     }

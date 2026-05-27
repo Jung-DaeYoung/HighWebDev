@@ -40,6 +40,18 @@ public class ScheduleService {
                     })
                     .toList();
 
+            schedules = new java.util.ArrayList<>();
+            schedules.addAll(future);
+            schedules.addAll(past);
+        }
+
+        // DTO 변환 및 색상 부여
+        List<ScheduleResponseDto> dtos = new java.util.ArrayList<>();
+        for (int i = 0; i < schedules.size(); i++) {
+            String color = RAINBOW[i % RAINBOW.length];
+            dtos.add(toResponseDto(schedules.get(i), color));
+        }
+        return dtos;
     }
 
     public Schedule findById(Long id) {
@@ -54,11 +66,14 @@ public class ScheduleService {
         scheduleRepository.deleteById(id);
     }
 
+    public ScheduleResponseDto toResponseDto(Schedule schedule, String color) {
         return new ScheduleResponseDto(
                 schedule,
                 getDDay(schedule.getDeadline()),
                 getUrgencyClass(schedule.getDeadline()),
                 getFormattedDeadline(schedule.getDeadline()),
+                getDisplayDeadline(schedule.getDeadline()),
+                color
         );
     }
 
