@@ -1,7 +1,7 @@
-package com.example.HighWebDev.service;
+package com.example.HighWebDev.member.service;
 
-import com.example.HighWebDev.entity.Member;
-import com.example.HighWebDev.repository.MemberRepository;
+import com.example.HighWebDev.member.entity.Member;
+import com.example.HighWebDev.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

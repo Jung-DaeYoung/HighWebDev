@@ -1,6 +1,6 @@
-package com.example.HighWebDev.repository;
+package com.example.HighWebDev.member.repository;
 
-import com.example.HighWebDev.entity.Member;
+import com.example.HighWebDev.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

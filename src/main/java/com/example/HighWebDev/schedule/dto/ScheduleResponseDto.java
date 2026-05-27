@@ -1,6 +1,6 @@
-package com.example.HighWebDev.dto;
+package com.example.HighWebDev.schedule.dto;
 
-import com.example.HighWebDev.entity.Schedule;
+import com.example.HighWebDev.schedule.entity.Schedule;
 import lombok.Getter;
 
 @Getter

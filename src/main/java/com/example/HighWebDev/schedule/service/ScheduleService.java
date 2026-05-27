@@ -1,8 +1,8 @@
-package com.example.HighWebDev.service;
+package com.example.HighWebDev.schedule.service;
 
-import com.example.HighWebDev.dto.ScheduleResponseDto;
-import com.example.HighWebDev.entity.Schedule;
-import com.example.HighWebDev.repository.ScheduleRepository;
+import com.example.HighWebDev.schedule.dto.ScheduleResponseDto;
+import com.example.HighWebDev.schedule.entity.Schedule;
+import com.example.HighWebDev.schedule.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +45,6 @@ public class ScheduleService {
             schedules.addAll(past);
         }
 
-        // DTO 변환 및 색상 부여
         List<ScheduleResponseDto> dtos = new java.util.ArrayList<>();
         for (int i = 0; i < schedules.size(); i++) {
             String color = RAINBOW[i % RAINBOW.length];

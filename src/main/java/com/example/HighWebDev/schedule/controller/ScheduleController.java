@@ -1,9 +1,9 @@
-package com.example.HighWebDev.controller;
+package com.example.HighWebDev.schedule.controller;
 
-import com.example.HighWebDev.dto.ScheduleForm;
-import com.example.HighWebDev.dto.ScheduleResponseDto;
-import com.example.HighWebDev.entity.Schedule;
-import com.example.HighWebDev.service.ScheduleService;
+import com.example.HighWebDev.schedule.dto.ScheduleForm;
+import com.example.HighWebDev.schedule.dto.ScheduleResponseDto;
+import com.example.HighWebDev.schedule.entity.Schedule;
+import com.example.HighWebDev.schedule.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

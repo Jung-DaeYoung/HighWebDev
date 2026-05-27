@@ -1,6 +1,6 @@
-package com.example.HighWebDev.repository;
+package com.example.HighWebDev.schedule.repository;
 
-import com.example.HighWebDev.entity.Schedule;
+import com.example.HighWebDev.schedule.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.HighWebDev.entity;
+package com.example.HighWebDev.schedule.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

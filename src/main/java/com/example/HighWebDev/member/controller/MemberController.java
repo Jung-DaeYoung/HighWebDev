@@ -1,6 +1,6 @@
-package com.example.HighWebDev.controller;
+package com.example.HighWebDev.member.controller;
 
-import com.example.HighWebDev.service.MemberService;
+import com.example.HighWebDev.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

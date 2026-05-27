@@ -1,6 +1,6 @@
 package com.example.HighWebDev.config;
 
-import com.example.HighWebDev.service.MemberService;
+import com.example.HighWebDev.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

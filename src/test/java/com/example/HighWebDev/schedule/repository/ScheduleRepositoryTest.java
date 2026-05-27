@@ -1,6 +1,6 @@
-package com.example.HighWebDev.repository;
+package com.example.HighWebDev.schedule.repository;
 
-import com.example.HighWebDev.entity.Schedule;
+import com.example.HighWebDev.schedule.entity.Schedule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ class ScheduleRepositoryTest {
 
         // 3. 검증
         assertEquals("빠른 일정", schedules.get(0).getTitle(), "가장 빠른 일정이 첫 번째여야 함");
-        
+
         // 정렬 확인 (이전 마감시간 <= 다음 마감시간)
         for (int i = 0; i < schedules.size() - 1; i++) {
             LocalDateTime current = schedules.get(i).getDeadline();
