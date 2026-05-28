@@ -1,5 +1,7 @@
 package com.example.HighWebDev.schedule.controller;
 
+import com.example.HighWebDev.memo.dto.MemoResponseDto;
+import com.example.HighWebDev.memo.service.MemoService;
 import com.example.HighWebDev.schedule.dto.ScheduleForm;
 import com.example.HighWebDev.schedule.dto.ScheduleResponseDto;
 import com.example.HighWebDev.schedule.entity.Schedule;
@@ -21,6 +23,7 @@ import java.util.List;
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    private final MemoService memoService;
 
     @GetMapping
     public String index(@AuthenticationPrincipal UserDetails userDetails,
@@ -28,11 +31,14 @@ public class ScheduleController {
                         Model model) {
         if (userDetails == null) {
             model.addAttribute("scheduleList", List.of());
+            model.addAttribute("memoList", List.of());
             return "schedules/index";
         }
         List<ScheduleResponseDto> scheduleList = scheduleService.findAllByUsername(userDetails.getUsername(), sort);
+        List<MemoResponseDto> memoList = memoService.findAllByUsername(userDetails.getUsername());
         model.addAttribute("scheduleList", scheduleList);
         model.addAttribute("isDeadlineSort", "deadline".equals(sort));
+        model.addAttribute("memoList", memoList);
         return "schedules/index";
     }
 

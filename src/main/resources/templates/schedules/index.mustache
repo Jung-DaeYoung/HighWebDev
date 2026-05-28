@@ -167,6 +167,85 @@
     }
 
     .header-btn-primary:hover { background: #0b5ed7; }
+
+    .memo-section {
+        padding: 16px;
+        padding-top: 0;
+    }
+
+    .memo-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .memo-add-form {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 14px 16px;
+        margin-top: 16px;
+        border: 1.5px solid #b6c8f5;
+    }
+
+    .memo-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .memo-edit { display: none; }
+    .memo-card:target .memo-view { display: none; }
+    .memo-card:target .memo-edit { display: block; }
+    .memo-card:target { border-left-color: #0b5ed7; box-shadow: 0 0 0 2px #b6c8f5; }
+
+    .memo-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 14px 16px;
+        width: calc(25% - 9px);
+        min-width: 200px;
+        border-left: 4px solid #0d6efd;
+        position: relative;
+        transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    @media (max-width: 1200px) { .memo-card { width: calc(33.33% - 8px); } }
+    @media (max-width: 768px)  { .memo-card { width: calc(50% - 6px); } }
+
+    .memo-card:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.12); }
+
+    .memo-card-title {
+        font-size: 0.88rem; font-weight: 700; color: #0a0a0a;
+        margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .memo-card-content {
+        font-size: 0.82rem; color: #374151;
+        white-space: pre-wrap; word-break: break-word;
+        max-height: 80px; overflow: hidden;
+    }
+
+    .memo-card-footer {
+        display: flex; justify-content: space-between; align-items: center; margin-top: 10px;
+    }
+
+    .memo-card-time { font-size: 0.72rem; color: #9ca3af; }
+
+    .memo-card-actions { display: flex; gap: 6px; }
+
+    .memo-btn {
+        font-size: 0.72rem; font-weight: 700; padding: 2px 8px;
+        border-radius: 5px; border: 1.5px solid; cursor: pointer; background: #fff;
+        line-height: 1.5;
+    }
+
+    .memo-btn-edit { color: #0d6efd; border-color: #0d6efd; }
+    .memo-btn-edit:hover { background: #e8f0fe; }
+    .memo-btn-delete { color: #dc3545; border-color: #dc3545; }
+    .memo-btn-delete:hover { background: #fdecea; }
 </style>
 
 <div class="main-layout">
@@ -205,6 +284,68 @@
         </div>
     </div>
 </div>
+
+<!-- 메모 섹션 -->
+<div class="memo-section">
+    <div class="memo-section-header">
+        <span class="section-title">📝 메모</span>
+    </div>
+
+    <div class="memo-grid">
+        {{#memoList}}
+        <div class="memo-card" id="memo-{{id}}">
+            <!-- 보기 모드 -->
+            <div class="memo-view">
+                {{#title}}<div class="memo-card-title">{{title}}</div>{{/title}}
+                <div class="memo-card-content">{{content}}</div>
+                <div class="memo-card-footer">
+                    <span class="memo-card-time">{{formattedTime}}</span>
+                    <div class="memo-card-actions">
+                        <a href="#memo-{{id}}" class="memo-btn memo-btn-edit">수정</a>
+                        <form action="/memos/{{id}}/delete" method="post" style="display:inline;">
+                            <button type="submit" class="memo-btn memo-btn-delete">삭제</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- 편집 모드 (:target 시 표시) -->
+            <div class="memo-edit">
+                <form action="/memos/update" method="post">
+                    <input type="hidden" name="id" value="{{id}}">
+                    <input type="text" name="title" class="form-control form-control-sm mb-2"
+                           value="{{title}}" placeholder="제목 (선택사항)">
+                    <textarea name="content" class="form-control form-control-sm mb-2"
+                              rows="3" required>{{content}}</textarea>
+                    <div class="d-flex gap-2 justify-content-end">
+                        <a href="/schedules" class="header-btn header-btn-outline">취소</a>
+                        <button type="submit" class="header-btn header-btn-primary">저장</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{/memoList}}
+        {{^memoList}}
+        <div class="text-center py-4 w-100" style="color:#9ca3af; font-size:0.88rem;">
+            등록된 메모가 없습니다.
+        </div>
+        {{/memoList}}
+    </div>
+
+    <div class="memo-add-form">
+        <form action="/memos/create" method="post">
+            <div class="mb-2">
+                <input type="text" name="title" class="form-control form-control-sm" placeholder="제목 (선택사항)">
+            </div>
+            <div class="mb-2">
+                <textarea name="content" class="form-control form-control-sm" rows="3" placeholder="메모 내용을 입력하세요" required></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="header-btn header-btn-primary">저장</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 <script id="schedule-data" type="application/json">
     []
@@ -357,6 +498,7 @@
             });
         });
     });
+
 </script>
 
 {{>layouts/footer}}
